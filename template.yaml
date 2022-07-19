@@ -1,0 +1,96 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: template-1
+  title: "template-1"
+  description: Do not use
+  tags:
+    - rcptest
+    - testscopes
+spec:
+  owner: stormbreaker@expedia.com
+  type: service
+  parameters:
+    - title: Inject Application Metadata Fields
+      id: inject-app-metadata
+    - title: Provide additional information
+      required:
+        - airflow_platform
+        - compute_platform        
+      properties:
+        compute_platform:
+          title: Select the compute platform of your choice.
+          type: string
+          default: rcp
+          enum:
+            - rcp      
+        airflow_platform:
+          title: Select the airflow platform of your choice.
+          type: string
+          default: mldp_wo
+          enum:
+            - mldp_wo
+      dependencies:
+        airflow_platform:
+          oneOf:
+            - properties:
+                airflow_platform:
+                  enum:
+                    - mldp_wo
+                client_name:
+                  title: Airflow cluster name
+                  type: string
+                  description: Name of airflow cluster already created in RCP.
+              required:
+                - client_name
+
+        compute_platform:
+          oneOf:
+            - properties:
+                compute_platform:
+                  enum:
+                    - rcp
+                island:
+                  title: Island
+                  type: string
+                  description: https://confluence.expedia.biz/pages/viewpage.action?spaceKey=RUN&title=Island+Buildout+Tracker
+                  default: data
+                  enum:
+                    - data
+                region:
+                  title: Region
+                  type: string
+                  description: https://github.expedia.biz/pm-dpi-run/innersource/blob/master/proposals/island-vocabulary/index.md#region
+                  default: us-east-1
+                  enum:
+                    - us-east-1
+                    - us-west-2
+                pciCategory:
+                  title: PCI Category
+                  type: string
+                  description: https://github.expedia.biz/pm-dpi-run/innersource/blob/master/proposals/island-vocabulary/index.md#pci-category
+                  default: oos
+                  enum:
+                    - oos
+                    
+                env_scopes:
+                  title: Choose RCP Deployment Environment scopes - (Test is Default)
+                  type: object
+                  description: https://confluence.expedia.biz/display/DAPS/Data+Processing+Island+Availability
+                  properties:
+                    dw:
+                      type: boolean
+                      default: true
+                      
+                    #prod:
+                      #type: boolean
+                      #default: false
+                      
+                    #corp:
+                      #type: boolean
+                      #default: false                    
+                    
+              required:
+                - pciCategory
+                - island
+                - region
